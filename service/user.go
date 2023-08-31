@@ -1,73 +1,56 @@
 package service
 
 import (
-	"context"
-	"github.com/RaymondCode/simple-demo/Entry"
-	"github.com/RaymondCode/simple-demo/tools"
-	"log"
+	"errors"
+	"fmt"
+
+	"github.com/RaymondCode/simple-demo/model"
+	"github.com/RaymondCode/simple-demo/repository"
+
+	"crypto/md5"
+	"encoding/hex"
 )
 
-// 0-success,1-username is exist,2-create failed
-func Register(username string, password string) int {
-	var login Entry.LoginInfor
-
-	tools.SqlInit()
-	result := tools.DbCon.Where("user_name=?", username).First(&login)
-	if result.Error == nil {
-		return 1
-	}
-	password = tools.Md5Encode(password)
-	newloginInfor := Entry.LoginInfor{
-		UserName: username,
-		Password: password,
-	}
-	result = tools.DbCon.Create(&newloginInfor)
-	if result.Error != nil {
-		return 2
-	}
-	log.Printf("Create a new Loginfor: %v \n", newloginInfor.UserID)
-	newUser := Entry.User{
-		Id:   newloginInfor.UserID,
-		Name: newloginInfor.UserName,
-	}
-	result = tools.DbCon.Create(&newUser)
-	if result.Error != nil {
-		panic(result.Error)
-		//tools.DbCon.Delete(&newloginInfor, username) //?
-		return 2
-	}
-	log.Printf("Create a new Loginfor: %v \n", newUser.Name)
-	return 0
-
+type UserService struct {
+	userRepository *repository.UserRepository
 }
-func Login(username string, password string) Entry.User {
-	var login Entry.LoginInfor
-	password = tools.Md5Encode(password)
-	tools.SqlInit()
 
-	result := tools.DbCon.Where("user_name = ? AND password = ?", username, password).First(&login)
-	if result.Error != nil {
-		return Entry.User{}
-	}
-	var user Entry.User
-	result = tools.DbCon.Where("id=?", login.UserID).First(&user)
-	if result.Error != nil {
-		panic("can't find the user")
-
-	}
-	return user
-
+func NewUserService(ur *repository.UserRepository) *UserService {
+	return &UserService{userRepository: ur}
 }
-func CheckLogin(token string) (*Entry.User, error) {
 
-	ctx := context.Background()
-	serUser, err := tools.GetClient().Get(ctx, token).Result()
+func (us *UserService) Register(username, password string) (userId int64, err error) {
+	exists, err := us.userRepository.IsUsernameExists(username)
 	if err != nil {
-		return nil, err
+		fmt.Println(err)
+		return 0, err
 	}
-	user, err := Entry.DeserializeUser(serUser)
+	if exists {
+		return 0, errors.New("username exists")
+	}
+
+	newLoginInfo := &model.LoginInfo{
+		Username: username,
+		Password: md5Encode(username + password), // ensure uniqueness of stored password (for security concern)
+	}
+	if err = us.userRepository.CreateLoginInfo(newLoginInfo); err != nil {
+		return 0, err
+	}
+	return newLoginInfo.ID, nil
+}
+
+func (us *UserService) Login(username string, password string) (userId int64, err error) {
+	password = md5Encode(username + password)
+	id, err := us.userRepository.QueryIDByUsernameAndPassword(username, password)
 	if err != nil {
-		return nil, err
+		fmt.Println(err)
+		return 0, err
 	}
-	return user, nil
+	return id, nil
+}
+
+func md5Encode(pass string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(pass))
+	return hex.EncodeToString(hasher.Sum(nil))
 }

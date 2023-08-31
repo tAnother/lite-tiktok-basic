@@ -1,10 +1,15 @@
 package main
 
 import (
-	"github.com/RaymondCode/simple-demo/Middleware"
-	"github.com/RaymondCode/simple-demo/controller"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/RaymondCode/simple-demo/controller"
+	"github.com/RaymondCode/simple-demo/middleware"
+	"github.com/RaymondCode/simple-demo/repository"
+	"github.com/RaymondCode/simple-demo/service"
+
+	"github.com/RaymondCode/simple-demo/config"
+	"github.com/gin-gonic/gin"
 )
 
 func initRouter(r *gin.Engine) {
@@ -19,27 +24,36 @@ func initRouter(r *gin.Engine) {
 		})
 	})
 
-	apiRouter := r.Group("/douyin")
+	userRepo := repository.NewUserRepository(config.DbCon())
+	userService := service.NewUserService(userRepo)
+	userController := controller.NewUserController(userService) // todo: move out from router.go
 
-	// basic apis
-	apiRouter.GET("/feed/", controller.Feed)
-	apiRouter.GET("/user/", Middleware.TokenAuthMiddleware(), controller.UserInfo)
-	apiRouter.POST("/user/register/", controller.Register)
-	apiRouter.POST("/user/login/", controller.Login)
-	apiRouter.POST("/publish/action/", Middleware.TokenAuthMiddleware(), controller.Publish)
-	apiRouter.GET("/publish/list/", Middleware.TokenAuthMiddleware(), controller.PublishList)
+	publicRouter := r.Group("/douyin")
+	{
+		publicRouter.POST("/user/register/", userController.Register)
+		publicRouter.POST("/user/login/", userController.Login)
+		publicRouter.GET("/feed/", controller.Feed)
+	}
 
-	// extra apis - I
-	apiRouter.POST("/favorite/action/", controller.FavoriteAction)
-	apiRouter.GET("/favorite/list/", controller.FavoriteList)
-	apiRouter.POST("/comment/action/", controller.CommentAction)
-	apiRouter.GET("/comment/list/", controller.CommentList)
-
-	// extra apis - II
-	apiRouter.POST("/relation/action/", controller.RelationAction)
-	apiRouter.GET("/relation/follow/list/", controller.FollowList)
-	apiRouter.GET("/relation/follower/list/", controller.FollowerList)
-	apiRouter.GET("/relation/friend/list/", controller.FriendList)
-	apiRouter.GET("/message/chat/", controller.MessageChat)
-	apiRouter.POST("/message/action/", controller.MessageAction)
+	// need authentication
+	authRouter := r.Group("/douyin")
+	authRouter.Use(middleware.TokenAuth())
+	{
+		// basic apis
+		authRouter.GET("/user/", userController.UserInfo)
+		authRouter.POST("/publish/action/", controller.Publish)
+		authRouter.GET("/publish/list/", controller.PublishList)
+		// extra apis - I
+		authRouter.POST("/favorite/action/", controller.FavoriteAction)
+		authRouter.GET("/favorite/list/", controller.FavoriteList)
+		authRouter.POST("/comment/action/", controller.CommentAction)
+		authRouter.GET("/comment/list/", controller.CommentList)
+		// extra apis - II
+		authRouter.POST("/relation/action/", controller.RelationAction)
+		authRouter.GET("/relation/follow/list/", controller.FollowList)
+		authRouter.GET("/relation/follower/list/", controller.FollowerList)
+		authRouter.GET("/relation/friend/list/", controller.FriendList)
+		authRouter.GET("/message/chat/", controller.MessageChat)
+		authRouter.POST("/message/action/", controller.MessageAction)
+	}
 }

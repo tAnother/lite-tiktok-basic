@@ -1,94 +1,105 @@
 package controller
 
 import (
-	"context"
-	"github.com/RaymondCode/simple-demo/Entry"
-	"github.com/RaymondCode/simple-demo/service"
-	"github.com/RaymondCode/simple-demo/tools"
-	"github.com/gin-gonic/gin"
+	"fmt"
 	"net/http"
+
+	"github.com/RaymondCode/simple-demo/model"
+	"github.com/RaymondCode/simple-demo/service"
+	"github.com/gin-gonic/gin"
 )
 
 // usersLoginInfo use map to store user info, and key is username+password for demo
 // user data will be cleared every time the server starts
 // test data: username=zhanglei, password=douyin
-var usersLoginInfo = map[string]Entry.User{}
+var usersLoginInfo = map[string]model.User{}
 
-var userIdSequence = int64(1)
+// var userIdSequence = int64(1) // todo: should read from db
 
 /*
-tony:后期使用redis作为登录缓存
+tony: todo: 使用redis作为登录缓存
 */
-type UserLoginResponse struct {
-	Entry.Response
-	UserId int64  `json:"user_id,omitempty"`
-	Token  string `json:"token"`
+
+type UserController struct {
+	userService *service.UserService
 }
 
-type UserResponse struct {
-	Entry.Response
-	User Entry.User `json:"user"`
+func NewUserController(us *service.UserService) *UserController {
+	return &UserController{userService: us}
 }
 
-func Register(c *gin.Context) {
-	username := c.Query("username")
-	password := c.Query("password")
-	result := service.Register(username, password)
-	if result == 0 {
-		userIdSequence++
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Entry.Response{StatusCode: 0},
-			UserId:   userIdSequence,
-			Token:    username + password,
+func (uc *UserController) Register(c *gin.Context) {
+	var registrationRequest struct { // todo: ideally this should also go into protocols.go
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	if err := c.ShouldBindJSON(&registrationRequest); err != nil {
+		fmt.Println(err.Error())
+		c.JSON(http.StatusBadRequest, UserLoginResponse{
+			Response: Response{StatusCode: BadRequest, StatusMsg: "registration failed: bad request format"},
+			UserId:   0,
+			Token:    "",
 		})
-
-	} else if result == 1 {
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Entry.Response{StatusCode: 1, StatusMsg: "Username already exist"},
-		})
-	} else {
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Entry.Response{StatusCode: 1, StatusMsg: "unknown error"},
-		})
-
+		return
 	}
 
-}
-
-func Login(c *gin.Context) {
-	ctx := context.Background()
-	username := c.Query("username")
-	password := c.Query("password")
-	currUser := service.Login(username, password)
-	if currUser.Id != 0 {
-		token := username + password
-
-		ser, _ := Entry.SerializeUser(currUser)
-
-		redis := tools.GetClient()
-		redis.Set(ctx, token, ser, 0)
-
-		//c.SetCookie("token", token, 3600, "/", "localhost", false, false)
-
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Entry.Response{StatusCode: 0},
-			UserId:   currUser.Id,
-			Token:    token})
-
-	} else {
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: Entry.Response{StatusCode: 1, StatusMsg: "Username or Password Incorrect"},
+	userID, err := uc.userService.Register(registrationRequest.Username, registrationRequest.Password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, UserLoginResponse{
+			Response: Response{StatusCode: BadCredentials, StatusMsg: "registration failed: username exists"},
+			UserId:   0,
+			Token:    "",
 		})
+		return
 	}
+	c.JSON(http.StatusOK, UserLoginResponse{
+		Response: Response{StatusCode: Success, StatusMsg: "success"},
+		UserId:   userID,
+		Token:    "heyo",
+	})
 }
 
-func UserInfo(c *gin.Context) {
-	user, _ := c.MustGet("user").(Entry.User)
+func (uc *UserController) Login(c *gin.Context) {
+	var loginRequest struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	if err := c.ShouldBindJSON(&loginRequest); err != nil {
+		fmt.Println(err.Error())
+		c.JSON(http.StatusBadRequest, UserLoginResponse{
+			Response: Response{StatusCode: BadRequest, StatusMsg: "login failed: bad request format"},
+			UserId:   0,
+			Token:    "",
+		})
+		return
+	}
 
-	//user := *userP
+	userID, err := uc.userService.Login(loginRequest.Username, loginRequest.Password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, UserLoginResponse{
+			Response: Response{StatusCode: BadCredentials, StatusMsg: "login failed: wrong username or password"},
+			UserId:   0,
+			Token:    "",
+		})
+		return
+	}
+
+	// token := username + password
+	// redis := config.RedisClient()
+	// redis.Set(ctx, token, userID, 0)
+
+	c.JSON(http.StatusOK, UserLoginResponse{
+		Response: Response{StatusCode: Success, StatusMsg: "success"},
+		UserId:   userID,
+		Token:    "heyo",
+	})
+}
+
+func (uc *UserController) UserInfo(c *gin.Context) {
+	user, _ := c.MustGet("user").(model.User) // todo: avoid panicking. also shoudln't this be user_id?
 
 	c.JSON(http.StatusOK, UserResponse{
-		Response: Entry.Response{StatusCode: 0},
+		Response: Response{StatusCode: 0},
 		User:     user,
 	})
 
