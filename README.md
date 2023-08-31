@@ -4,7 +4,7 @@
 
 1. controller/
 
-    - protocols/: 存放网络通信结构
+    - protocols.go: 存放网络通信结构
 
 2. service/：业务逻辑封装
 
@@ -19,6 +19,8 @@
 
 3. utils/：utils
 
+<br>
+
 ## 注意事项：
 1. 需在config中设置正确的mysql数据库端口，密码，用户名
 2. 设置正确的redis数据库端口，密码，用户名
@@ -31,12 +33,13 @@
 2. 暂无固定后端域名orIP，所以运行程序时需要手动输入服务端地址和端口，以获取正确的视频路径
 
 ### 优化方向
-[ ] 1. 优化数据存储（尝试mongoDB）
 
-[ ] 2. 优化依赖注入（别放router.go里）
+- [ ] 1. 优化数据存储（尝试mongoDB）
 
-[ ] 3. 找个好用的log库
+- [ ] 2. 优化依赖注入（别放router.go里）
 
-[ ] 4. 考虑是否有并发风险
+- [ ] 3. 找个好用的log库
 
-[ ] 5. protocols应该放在哪里？token相关的东西应该单独出来还是放在service层？controller应该负责construct response吗？
+- [ ] 4. 考虑是否有并发风险
+
+- [ ] 5. protocols应该放在哪里？token相关的东西应该单独出来还是放在service层？controller应该负责construct response吗？
