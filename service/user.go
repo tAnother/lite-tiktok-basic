@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/RaymondCode/simple-demo/config"
-	"github.com/RaymondCode/simple-demo/model"
-	"github.com/RaymondCode/simple-demo/repository"
+	"github.com/tAnother/lite-tiktok-basic/config"
+	"github.com/tAnother/lite-tiktok-basic/model"
+	"github.com/tAnother/lite-tiktok-basic/repository"
 
 	"crypto/md5"
 	"crypto/rand"

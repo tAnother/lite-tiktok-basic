@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/RaymondCode/simple-demo/model"
-	"github.com/RaymondCode/simple-demo/proto"
-	"github.com/RaymondCode/simple-demo/service"
 	"github.com/gin-gonic/gin"
+	"github.com/tAnother/lite-tiktok-basic/model"
+	"github.com/tAnother/lite-tiktok-basic/proto"
+	"github.com/tAnother/lite-tiktok-basic/service"
 )
 
 // usersLoginInfo use map to store user info, and key is username+password for demo

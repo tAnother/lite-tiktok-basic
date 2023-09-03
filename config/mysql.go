@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 
-	"github.com/RaymondCode/simple-demo/model"
+	"github.com/tAnother/lite-tiktok-basic/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

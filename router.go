@@ -3,13 +3,13 @@ package main
 import (
 	"net/http"
 
-	"github.com/RaymondCode/simple-demo/controller"
-	"github.com/RaymondCode/simple-demo/middleware"
-	"github.com/RaymondCode/simple-demo/repository"
-	"github.com/RaymondCode/simple-demo/service"
+	"github.com/tAnother/lite-tiktok-basic/controller"
+	"github.com/tAnother/lite-tiktok-basic/middleware"
+	"github.com/tAnother/lite-tiktok-basic/repository"
+	"github.com/tAnother/lite-tiktok-basic/service"
 
-	"github.com/RaymondCode/simple-demo/config"
 	"github.com/gin-gonic/gin"
+	"github.com/tAnother/lite-tiktok-basic/config"
 )
 
 func initRouter(r *gin.Engine) {

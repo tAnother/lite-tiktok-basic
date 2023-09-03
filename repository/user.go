@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/RaymondCode/simple-demo/model"
+	"github.com/tAnother/lite-tiktok-basic/model"
 	"gorm.io/gorm"
 )
 

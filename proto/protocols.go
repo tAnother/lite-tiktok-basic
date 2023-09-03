@@ -1,7 +1,7 @@
 package proto
 
 import (
-	"github.com/RaymondCode/simple-demo/model"
+	"github.com/tAnother/lite-tiktok-basic/model"
 )
 
 type StatusCode int32

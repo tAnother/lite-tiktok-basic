@@ -2,17 +2,19 @@ package controller
 
 import (
 	"fmt"
-	"github.com/RaymondCode/simple-demo/Entry"
-	"github.com/RaymondCode/simple-demo/service"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/tAnother/lite-tiktok-basic/model"
+	"github.com/tAnother/lite-tiktok-basic/proto"
+	"github.com/tAnother/lite-tiktok-basic/service"
 )
 
 type FeedResponse struct {
-	Entry.Response
-	VideoList []Entry.Video `json:"video_list,omitempty"`
+	proto.Response
+	VideoList []model.Video `json:"video_list,omitempty"`
 	NextTime  int64         `json:"next_time,omitempty"`
 }
 
@@ -23,17 +25,17 @@ func Feed(c *gin.Context) {
 	if err != nil {
 		// Handle the error, e.g., send a bad request response
 		c.JSON(http.StatusOK, FeedResponse{
-			Response: Entry.Response{StatusCode: 1,
+			Response: proto.Response{StatusCode: 1,
 				StatusMsg: "unknown time format"},
 		})
 		return
 	}
 	maxVideos := 15
-	var videos []Entry.Video
+	var videos []model.Video
 	videos, err = service.Feed(t, maxVideos)
 	if err != nil {
 		c.JSON(http.StatusOK, FeedResponse{
-			Response: Entry.Response{StatusCode: 1,
+			Response: proto.Response{StatusCode: 1,
 				StatusMsg: "get videos error"},
 		})
 		return
@@ -42,7 +44,7 @@ func Feed(c *gin.Context) {
 	fmt.Print("---kk-------lastTime", lastTime)
 
 	c.JSON(http.StatusOK, FeedResponse{
-		Response:  Entry.Response{StatusCode: 0},
+		Response:  proto.Response{StatusCode: 0},
 		VideoList: videos,
 		NextTime:  time.Now().Unix(),
 	})

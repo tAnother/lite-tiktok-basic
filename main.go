@@ -5,8 +5,8 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/RaymondCode/simple-demo/config"
 	"github.com/gin-gonic/gin"
+	"github.com/tAnother/lite-tiktok-basic/config"
 )
 
 func main() {

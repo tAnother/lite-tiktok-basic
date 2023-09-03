@@ -15,7 +15,7 @@
 ### 其他：
 1. config/：redis相关初始化，mysql相关初始化，服务器地址端口设置
 
-2. middleware/：拦截器
+2. middleware/：目前只有一个拦截器
 
 <br>
 

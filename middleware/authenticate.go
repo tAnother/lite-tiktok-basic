@@ -15,7 +15,7 @@ func TokenAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Query("token")
 		if token == "" {
-			token = c.PostForm("token")
+			token = c.PostForm("token") // TODO: change it so that we choose how to get token base on request method
 		}
 		fmt.Println(token)
 

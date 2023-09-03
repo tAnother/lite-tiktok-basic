@@ -2,18 +2,19 @@ package service
 
 import (
 	"fmt"
-	"github.com/RaymondCode/simple-demo/Entry"
-	"github.com/RaymondCode/simple-demo/tools"
 	"math/rand"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/tAnother/lite-tiktok-basic/config"
+	"github.com/tAnother/lite-tiktok-basic/model"
 )
 
-func Publish(user Entry.User, path string, title string, fileName string) int64 {
+func Publish(user model.User, path string, title string, fileName string) int64 {
 
-	video := Entry.Video{
-		UserID:   user.Id,
+	video := model.Video{
+		UserID:   user.ID,
 		PlayUrl:  path + ".mp4",
 		Title:    title,
 		FileName: fileName,
@@ -21,17 +22,17 @@ func Publish(user Entry.User, path string, title string, fileName string) int64 
 		CoverUrl: "static\\cover\\img.jpg",
 	}
 
-	tools.DbCon.Create(&video)
-	if video.Id != 0 {
-		return video.Id
+	config.DbCon().Create(&video)
+	if video.ID != 0 {
+		return video.ID
 	} else {
 		return -1
 	}
 
 }
 func SetFileName(userId int64) string {
-	var lastVideo Entry.Video
-	result := tools.DbCon.Where("user_id=?", userId).Last(&lastVideo)
+	var lastVideo model.Video
+	result := config.DbCon().Where("user_id=?", userId).Last(&lastVideo)
 	if result.Error == nil {
 		last := lastVideo.FileName
 		parts := strings.Split(last, "_")
@@ -59,9 +60,9 @@ func SetFileName(userId int64) string {
 	}
 
 }
-func PublishList(userId int64) ([]Entry.Video, error) {
-	var videos []Entry.Video
-	result := tools.DbCon.Where("user_id=?", userId).Find(&videos)
+func PublishList(userId int64) ([]model.Video, error) {
+	var videos []model.Video
+	result := config.DbCon().Where("user_id=?", userId).Find(&videos)
 	if result.Error != nil {
 		panic("get video list failed")
 	}
@@ -69,10 +70,10 @@ func PublishList(userId int64) ([]Entry.Video, error) {
 	return setVideoURL(videos), result.Error
 }
 
-func setVideoURL(videos []Entry.Video) []Entry.Video {
+func setVideoURL(videos []model.Video) []model.Video {
 	for i := range videos {
-		videos[i].PlayUrl = "http://" + tools.IP + ":" + tools.Port + "\\" + videos[i].PlayUrl
-		videos[i].CoverUrl = "http://" + tools.IP + ":" + tools.Port + "\\" + videos[i].CoverUrl
+		videos[i].PlayUrl = "http://" + config.IP + ":" + config.Port + "\\" + videos[i].PlayUrl
+		videos[i].CoverUrl = "http://" + config.IP + ":" + config.Port + "\\" + videos[i].CoverUrl
 	}
 	return videos
 }
