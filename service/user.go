@@ -1,13 +1,17 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"strconv"
 
+	"github.com/RaymondCode/simple-demo/config"
 	"github.com/RaymondCode/simple-demo/model"
 	"github.com/RaymondCode/simple-demo/repository"
 
 	"crypto/md5"
+	"crypto/rand"
 	"encoding/hex"
 )
 
@@ -37,9 +41,11 @@ func (us *UserService) Register(username, password string) (userID int64, token 
 		return 0, "", err
 	}
 
-	// token := username + password
-	// redis := config.RedisClient()
-	// redis.Set(ctx, token, userID, 0)
+	if token, err = genToken(); err != nil {
+		return newLoginInfo.ID, "", err
+	}
+	redis := config.RedisClient()
+	redis.Set(context.Background(), token, strconv.FormatInt(userID, 10), 0)
 
 	return newLoginInfo.ID, token, nil
 }
@@ -51,6 +57,13 @@ func (us *UserService) Login(username string, password string) (userID int64, to
 		fmt.Println(err)
 		return 0, "", err
 	}
+
+	if token, err = genToken(); err != nil {
+		return userID, "", err
+	}
+	redis := config.RedisClient()
+	redis.Set(context.Background(), token, strconv.FormatInt(userID, 10), 0)
+
 	return userID, token, nil
 }
 
@@ -58,4 +71,14 @@ func md5Encode(pass string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(pass))
 	return hex.EncodeToString(hasher.Sum(nil))
+}
+
+func genToken() (string, error) {
+	tokenBytes := make([]byte, 32)
+	_, err := rand.Read(tokenBytes)
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+	return hex.EncodeToString(tokenBytes), nil
 }

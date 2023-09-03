@@ -14,10 +14,10 @@ import (
 // test data: username=zhanglei, password=douyin
 var usersLoginInfo = map[string]model.User{}
 
-// var userIdSequence = int64(1) // todo: should read from db
+// var userIdSequence = int64(1) // TODO: should read from db
 
 /*
-tony: todo: 使用redis作为登录缓存
+tony: TODO: 使用redis作为登录缓存
 */
 
 type UserController struct {
@@ -29,7 +29,7 @@ func NewUserController(us *service.UserService) *UserController {
 }
 
 func (uc *UserController) Register(c *gin.Context) {
-	var registrationRequest struct { // todo: ideally this should also go into protocols.go
+	var registrationRequest struct { // TODO: ideally this should also go into protocols.go
 		Username string `json:"username" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
@@ -92,7 +92,7 @@ func (uc *UserController) Login(c *gin.Context) {
 }
 
 func (uc *UserController) UserInfo(c *gin.Context) {
-	user, _ := c.MustGet("user").(model.User) // todo: avoid panicking. also shoudln't this be user_id?
+	user, _ := c.MustGet("user").(model.User) // TODO: avoid panicking. also shoudln't this be user_id?
 
 	c.JSON(http.StatusOK, UserResponse{
 		Response: Response{StatusCode: 0},

@@ -4,20 +4,18 @@
 
 1. controller/
 
-    - protocols.go: 存放网络通信结构
-
 2. service/：业务逻辑封装
 
 3. repository/：crud操作
 
 4. model/: 存放实体类定义（数据库依赖于这些定义）
 
+5. proto/：网络通信结构
+
 ### 其他：
 1. config/：redis相关初始化，mysql相关初始化，服务器地址端口设置
 
 2. middleware/：拦截器
-
-3. utils/：utils
 
 <br>
 
@@ -42,4 +40,6 @@
 
 - [ ] 4. 考虑是否有并发风险
 
-- [ ] 5. protocols应该放在哪里？token相关的东西应该单独出来还是放在service层？controller应该负责construct response吗？
+- [ ] 5. token相关的东西应该单独出来还是放在service层？controller应该负责construct response吗？
+
+- [ ] 6. 设置token过期时间

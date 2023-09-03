@@ -6,7 +6,7 @@ import (
 
 type StatusCode int32
 
-const (
+const ( // TODO: there should be a better way to define status code
 	Success        StatusCode = 0
 	BadRequest     StatusCode = 1
 	BadCredentials StatusCode = 2
