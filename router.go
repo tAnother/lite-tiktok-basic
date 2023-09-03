@@ -49,11 +49,11 @@ func initRouter(r *gin.Engine) {
 		authRouter.POST("/comment/action/", controller.CommentAction)
 		authRouter.GET("/comment/list/", controller.CommentList)
 		// extra apis - II
-		authRouter.POST("/relation/action/", controller.RelationAction)
-		authRouter.GET("/relation/follow/list/", controller.FollowList)
-		authRouter.GET("/relation/follower/list/", controller.FollowerList)
-		authRouter.GET("/relation/friend/list/", controller.FriendList)
-		authRouter.GET("/message/chat/", controller.MessageChat)
-		authRouter.POST("/message/action/", controller.MessageAction)
+		// authRouter.POST("/relation/action/", controller.RelationAction)
+		// authRouter.GET("/relation/follow/list/", controller.FollowList)
+		// authRouter.GET("/relation/follower/list/", controller.FollowerList)
+		// authRouter.GET("/relation/friend/list/", controller.FriendList)
+		// authRouter.GET("/message/chat/", controller.MessageChat)
+		// authRouter.POST("/message/action/", controller.MessageAction)
 	}
 }

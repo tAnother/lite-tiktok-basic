@@ -15,7 +15,7 @@ func main() {
 
 	// 循环直到获取一个有效的IP，默认为127.0.0.1
 	for {
-		fmt.Print("Enter server ip_address (default 127.0.0.1): ")
+		fmt.Print("Enter server ip_address (press Enter to use default 127.0.0.1): ")
 		fmt.Scanln(&serverIP)
 
 		if serverIP == "" {
@@ -31,7 +31,7 @@ func main() {
 
 	// 循环直到获取一个有效的端口，默认为8080
 	for {
-		fmt.Print("Enter port (default 8080): ")
+		fmt.Print("Enter port (press Enter to use default 8080): ")
 		fmt.Scanln(&port)
 
 		if port == "" {
