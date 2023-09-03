@@ -14,7 +14,7 @@ type Video struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index"`
 	Author        User           `json:"author" `
 	UserName      string         `json:"user_name"`
-	UserID        int64          `gorm:"foreignKey:UserID"` // TODO: why foreignkey
+	UserID        int64          `gorm:"foreignKey:UserID"`
 	PlayUrl       string         `json:"play_url,omitempty"`
 	CoverUrl      string         `json:"cover_url,omitempty"`
 	FavoriteCount int64          `json:"favorite_count,omitempty"`
@@ -25,20 +25,20 @@ type Video struct {
 }
 
 type User struct {
-	ID              int64 `json:"id,omitempty" gorm:"primaryKey;not null"`
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	DeletedAt       gorm.DeletedAt `gorm:"index"` // TODO: ...ok why use index here?
-	Name            string         `json:"name,omitempty" gorm:"index"`
-	FollowCount     int64          `json:"follow_count,omitempty"`
-	FollowerCount   int64          `json:"follower_count,omitempty"`
-	IsFollow        bool           `json:"is_follow,omitempty"`
-	Avatar          string         `json:"avatar,omitempty"`
-	BackgroundImage string         `json:"background_image,omitempty"`
-	Signature       string         `json:"signature,omitempty"`
-	TotalFavorited  int64          `json:"total_favorited,omitempty"`
-	WorkCount       int64          `json:"work_count,omitempty"`
-	FavoriteCount   int64          `json:"favorite_count,omitempty"`
+	ID int64 `json:"id,omitempty" gorm:"primaryKey;not null"`
+	// CreatedAt       time.Time
+	// UpdatedAt       time.Time
+	// DeletedAt       gorm.DeletedAt `gorm:"index"` ///  ...ok why use index here?
+	Name            string `json:"name" gorm:"index"`
+	FollowCount     int64  `json:"follow_count"`
+	FollowerCount   int64  `json:"follower_count"`
+	IsFollow        bool   `json:"is_follow"`
+	Avatar          string `json:"avatar"`
+	BackgroundImage string `json:"background_image"`
+	Signature       string `json:"signature"`
+	TotalFavorited  int64  `json:"total_favorited"`
+	WorkCount       int64  `json:"work_count"`
+	FavoriteCount   int64  `json:"favorite_count"`
 }
 
 type LoginInfo struct {

@@ -25,7 +25,7 @@ type UserLoginResponse struct {
 
 type UserResponse struct {
 	Response
-	User model.User `json:"user"`
+	User *model.User `json:"user"`
 }
 
 // type MessageSendEvent struct {

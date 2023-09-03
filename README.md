@@ -36,7 +36,7 @@
 
 - [ ] 2. 优化依赖注入（别放router.go里）
 
-- [ ] 3. 找个好用的log库，优化debug print
+- [ ] 3. 找个好用的log库，优化debug print和error output
 
 - [ ] 4. 考虑是否有并发风险
 
