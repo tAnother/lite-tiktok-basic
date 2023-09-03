@@ -19,14 +19,14 @@ func NewUserService(ur *repository.UserRepository) *UserService {
 	return &UserService{userRepository: ur}
 }
 
-func (us *UserService) Register(username, password string) (userId int64, err error) {
+func (us *UserService) Register(username, password string) (userID int64, token string, err error) {
 	exists, err := us.userRepository.IsUsernameExists(username)
 	if err != nil {
 		fmt.Println(err)
-		return 0, err
+		return 0, "", err
 	}
 	if exists {
-		return 0, errors.New("username exists")
+		return 0, "", errors.New("username exists")
 	}
 
 	newLoginInfo := &model.LoginInfo{
@@ -34,19 +34,24 @@ func (us *UserService) Register(username, password string) (userId int64, err er
 		Password: md5Encode(username + password), // ensure uniqueness of stored password (for security concern)
 	}
 	if err = us.userRepository.CreateLoginInfo(newLoginInfo); err != nil {
-		return 0, err
+		return 0, "", err
 	}
-	return newLoginInfo.ID, nil
+
+	// token := username + password
+	// redis := config.RedisClient()
+	// redis.Set(ctx, token, userID, 0)
+
+	return newLoginInfo.ID, token, nil
 }
 
-func (us *UserService) Login(username string, password string) (userId int64, err error) {
+func (us *UserService) Login(username string, password string) (userID int64, token string, err error) {
 	password = md5Encode(username + password)
-	id, err := us.userRepository.QueryIDByUsernameAndPassword(username, password)
+	userID, err = us.userRepository.QueryIDByUsernameAndPassword(username, password)
 	if err != nil {
 		fmt.Println(err)
-		return 0, err
+		return 0, "", err
 	}
-	return id, nil
+	return userID, token, nil
 }
 
 func md5Encode(pass string) string {

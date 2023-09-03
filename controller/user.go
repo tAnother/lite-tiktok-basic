@@ -30,20 +30,20 @@ func NewUserController(us *service.UserService) *UserController {
 
 func (uc *UserController) Register(c *gin.Context) {
 	var registrationRequest struct { // todo: ideally this should also go into protocols.go
-		Username string `json:"username"`
-		Password string `json:"password"`
+		Username string `json:"username" binding:"required"`
+		Password string `json:"password" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&registrationRequest); err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusBadRequest, UserLoginResponse{
-			Response: Response{StatusCode: BadRequest, StatusMsg: "registration failed: bad request format"},
+			Response: Response{StatusCode: BadRequest, StatusMsg: "registration failed: username and password cannot be null"},
 			UserId:   0,
 			Token:    "",
 		})
 		return
 	}
 
-	userID, err := uc.userService.Register(registrationRequest.Username, registrationRequest.Password)
+	userID, token, err := uc.userService.Register(registrationRequest.Username, registrationRequest.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, UserLoginResponse{
 			Response: Response{StatusCode: BadCredentials, StatusMsg: "registration failed: username exists"},
@@ -55,26 +55,26 @@ func (uc *UserController) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, UserLoginResponse{
 		Response: Response{StatusCode: Success, StatusMsg: "success"},
 		UserId:   userID,
-		Token:    "heyo",
+		Token:    token,
 	})
 }
 
 func (uc *UserController) Login(c *gin.Context) {
 	var loginRequest struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
+		Username string `json:"username" binding:"required"`
+		Password string `json:"password" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&loginRequest); err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusBadRequest, UserLoginResponse{
-			Response: Response{StatusCode: BadRequest, StatusMsg: "login failed: bad request format"},
+			Response: Response{StatusCode: BadRequest, StatusMsg: "login failed: username and password cannot be null"},
 			UserId:   0,
 			Token:    "",
 		})
 		return
 	}
 
-	userID, err := uc.userService.Login(loginRequest.Username, loginRequest.Password)
+	userID, token, err := uc.userService.Login(loginRequest.Username, loginRequest.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, UserLoginResponse{
 			Response: Response{StatusCode: BadCredentials, StatusMsg: "login failed: wrong username or password"},
@@ -84,14 +84,10 @@ func (uc *UserController) Login(c *gin.Context) {
 		return
 	}
 
-	// token := username + password
-	// redis := config.RedisClient()
-	// redis.Set(ctx, token, userID, 0)
-
 	c.JSON(http.StatusOK, UserLoginResponse{
 		Response: Response{StatusCode: Success, StatusMsg: "success"},
 		UserId:   userID,
-		Token:    "heyo",
+		Token:    token,
 	})
 }
 
