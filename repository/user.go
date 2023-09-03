@@ -17,12 +17,6 @@ func (ur *UserRepository) CreateLoginInfo(loginInfo *model.LoginInfo) error {
 	return ur.db.Create(loginInfo).Error
 }
 
-func (ur *UserRepository) QueryIDByUsernameAndPassword(username string, password string) (int64, error) {
-	var loginInfo model.LoginInfo
-	result := ur.db.Where("username = ? AND password = ?", username, password).First(&loginInfo)
-	return loginInfo.ID, result.Error
-}
-
 func (ur *UserRepository) IsUsernameExists(username string) (bool, error) {
 	var loginInfo model.LoginInfo
 	result := ur.db.Where("username = ?", username).First(&loginInfo)
@@ -30,4 +24,10 @@ func (ur *UserRepository) IsUsernameExists(username string) (bool, error) {
 		return false, result.Error
 	}
 	return result.RowsAffected > 0, nil
+}
+
+func (ur *UserRepository) QueryIDByUsernameAndPassword(username string, password string) (int64, error) {
+	var loginInfo model.LoginInfo
+	result := ur.db.Where("username = ? AND password = ?", username, password).First(&loginInfo)
+	return loginInfo.ID, result.Error
 }
