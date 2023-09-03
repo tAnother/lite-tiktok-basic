@@ -14,7 +14,7 @@ func RedisInit() {
 		Password: "", // 如果没有密码则为空
 		DB:       0,  // 默认 DB
 	})
-	client.Set(context.Background(), "", "", 0) // empty token - invalid userid
+	client.Set(context.Background(), "", "", 0) // match empty token with invalid userid
 }
 
 func RedisClient() *redis.Client {

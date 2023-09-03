@@ -16,7 +16,7 @@ var (
 )
 
 func SqlInit() {
-	// please change it to your local username & password
+	// ****please change it to your local username & password
 	username = "root"
 	pw = "passcode"
 

@@ -45,6 +45,7 @@ func (uc *UserController) Register(c *gin.Context) {
 
 	userID, token, err := uc.userService.Register(registrationRequest.Username, registrationRequest.Password)
 	if err != nil {
+		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, UserLoginResponse{
 			Response: Response{StatusCode: BadCredentials, StatusMsg: "registration failed: username exists"},
 			UserId:   0,
@@ -76,6 +77,7 @@ func (uc *UserController) Login(c *gin.Context) {
 
 	userID, token, err := uc.userService.Login(loginRequest.Username, loginRequest.Password)
 	if err != nil {
+		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, UserLoginResponse{
 			Response: Response{StatusCode: BadCredentials, StatusMsg: "login failed: wrong username or password"},
 			UserId:   0,

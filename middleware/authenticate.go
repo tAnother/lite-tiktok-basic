@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -16,6 +17,8 @@ func TokenAuth() gin.HandlerFunc {
 		if token == "" {
 			token = c.PostForm("token")
 		}
+		fmt.Println(token)
+
 		userID, err := checkLogin(token)
 		if err != nil || userID == 0 {
 			c.JSON(http.StatusUnauthorized, proto.Response{

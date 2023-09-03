@@ -7,11 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type Response struct { // todo: move it out
-	StatusCode int32  `json:"status_code"`
-	StatusMsg  string `json:"status_msg"`
-}
-
 type Video struct {
 	ID            int64 `json:"id,omitempty" gorm:"primaryKey"`
 	CreatedAt     time.Time
@@ -19,7 +14,7 @@ type Video struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index"`
 	Author        User           `json:"author" `
 	UserName      string         `json:"user_name"`
-	UserID        int64          `gorm:"foreignKey:UserID"` // todo: why foreignkey
+	UserID        int64          `gorm:"foreignKey:UserID"` // TODO: why foreignkey
 	PlayUrl       string         `json:"play_url,omitempty"`
 	CoverUrl      string         `json:"cover_url,omitempty"`
 	FavoriteCount int64          `json:"favorite_count,omitempty"`
@@ -33,7 +28,7 @@ type User struct {
 	ID              int64 `json:"id,omitempty" gorm:"primaryKey;not null"`
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
-	DeletedAt       gorm.DeletedAt `gorm:"index"` // todo: ...ok why use index here?
+	DeletedAt       gorm.DeletedAt `gorm:"index"` // TODO: ...ok why use index here?
 	Name            string         `json:"name,omitempty" gorm:"index"`
 	FollowCount     int64          `json:"follow_count,omitempty"`
 	FollowerCount   int64          `json:"follower_count,omitempty"`

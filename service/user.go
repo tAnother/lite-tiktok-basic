@@ -26,7 +26,6 @@ func NewUserService(ur *repository.UserRepository) *UserService {
 func (us *UserService) Register(username, password string) (userID int64, token string, err error) {
 	exists, err := us.userRepository.IsUsernameExists(username)
 	if err != nil {
-		fmt.Println(err)
 		return 0, "", err
 	}
 	if exists {
@@ -45,16 +44,15 @@ func (us *UserService) Register(username, password string) (userID int64, token 
 		return newLoginInfo.ID, "", err
 	}
 	redis := config.RedisClient()
-	redis.Set(context.Background(), token, strconv.FormatInt(userID, 10), 0)
+	err = redis.Set(context.Background(), token, strconv.FormatInt(userID, 10), 0).Err()
 
-	return newLoginInfo.ID, token, nil
+	return newLoginInfo.ID, token, err
 }
 
 func (us *UserService) Login(username string, password string) (userID int64, token string, err error) {
 	password = md5Encode(username + password)
 	userID, err = us.userRepository.QueryIDByUsernameAndPassword(username, password)
 	if err != nil {
-		fmt.Println(err)
 		return 0, "", err
 	}
 
@@ -62,9 +60,9 @@ func (us *UserService) Login(username string, password string) (userID int64, to
 		return userID, "", err
 	}
 	redis := config.RedisClient()
-	redis.Set(context.Background(), token, strconv.FormatInt(userID, 10), 0)
+	err = redis.Set(context.Background(), token, strconv.FormatInt(userID, 10), 0).Err()
 
-	return userID, token, nil
+	return userID, token, err
 }
 
 func md5Encode(pass string) string {

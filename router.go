@@ -26,7 +26,7 @@ func initRouter(r *gin.Engine) {
 
 	userRepo := repository.NewUserRepository(config.DbCon())
 	userService := service.NewUserService(userRepo)
-	userController := controller.NewUserController(userService) // todo: move out from router.go
+	userController := controller.NewUserController(userService) // TODO: move out from router.go
 
 	publicRouter := r.Group("/douyin")
 	{
