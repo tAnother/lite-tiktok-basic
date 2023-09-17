@@ -36,6 +36,8 @@ func (us *UserService) Register(username, password string) (userID int64, token 
 		Username: username,
 		Password: md5Encode(username + password), // ensure uniqueness of stored password (for security concern)
 	}
+
+	// TODO: wrap it with transaction?
 	if err = us.userRepository.CreateLoginInfo(newLoginInfo); err != nil {
 		return 0, "", err
 	}

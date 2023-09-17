@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/RaymondCode/simple-demo/config"
-	"github.com/RaymondCode/simple-demo/proto"
 	"github.com/gin-gonic/gin"
+	"github.com/tAnother/lite-tiktok-basic/config"
+	"github.com/tAnother/lite-tiktok-basic/proto"
 )
 
 func TokenAuth() gin.HandlerFunc {
